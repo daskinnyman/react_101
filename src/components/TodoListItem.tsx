@@ -26,7 +26,7 @@ export const TodoListItem = ({ todo }: TodoListItemProps) => {
         toggleTodo(id, e);
     }
 
-    return <ListItem key={todo.id}
+    return <ListItem 
         secondaryAction={
             <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteClick(todo.id)}>
                 <DeleteIcon />

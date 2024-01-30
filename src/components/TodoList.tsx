@@ -9,7 +9,7 @@ export const TodoList = () => {
         if (todos.length === 0) {
             return <Typography fontSize={12} color={"#717171"} sx={{my:2}}>🎉 Hurray! You have no todos today!</Typography>
         }
-        return todos.map(todo => <TodoListItem todo={todo} />)
+        return todos.map(todo => <TodoListItem key={todo.id} todo={todo} />)
     }
 
     return <List>
