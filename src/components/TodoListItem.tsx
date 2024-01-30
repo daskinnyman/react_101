@@ -22,11 +22,11 @@ export const TodoListItem = ({ todo }: TodoListItemProps) => {
         if (!toggleTodo) {
             return
         }
-
-        toggleTodo(id, e);
+        const completed = e.target.checked;
+        toggleTodo(id, completed);
     }
 
-    return <ListItem 
+    return <ListItem
         secondaryAction={
             <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteClick(todo.id)}>
                 <DeleteIcon />

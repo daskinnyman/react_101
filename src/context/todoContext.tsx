@@ -1,53 +1,66 @@
-import { PropsWithChildren, createContext, useCallback, useState } from "react";
-import { Todo, todos } from "../mock/mock-todo";
+import { PropsWithChildren, Reducer, createContext, useReducer } from "react";
+import { Todo } from "../mock/mock-todo";
 
 
 type TodoContextType = {
     todos: Todo[],
-    addTodo?: (title: string) => void,
+    addTodo?: (todo: Todo) => void,
     deleteTodo?: (id: number) => void,
-    toggleTodo?: (id: number, e: React.ChangeEvent<HTMLInputElement>) => void
+    toggleTodo?: (id: number, completed: boolean) => void
 }
 
 export const TodoContext = createContext<TodoContextType>({
     todos: [],
 });
 
+enum TodoActionType {
+    ADD_TODO = "ADD_TODO",
+    DELETE_TODO = "DELETE_TODO",
+    TOGGLE_TODO = "TOGGLE_TODO"
+}
+
+type TodoAction = {
+    type: TodoActionType.ADD_TODO,
+    payload: Todo
+} | { type: TodoActionType.DELETE_TODO, payload: { id: number } }
+    | { type: TodoActionType.TOGGLE_TODO, payload: { id: number, completed: boolean } }
+
+type TodoState = {
+    todos: Todo[]
+}
+
+const INITIAL_STATE: TodoState = {
+    todos: [],
+};
+
+const todoReducer: Reducer<TodoState, TodoAction> = (state: TodoState, action: TodoAction): TodoState => {
+    switch (action.type) {
+        case TodoActionType.ADD_TODO:
+            return {
+                ...state,
+                todos: [...state.todos, action.payload]
+            };
+        case TodoActionType.DELETE_TODO:
+            return { ...state, todos: state.todos.filter(todo => todo.id !== action.payload.id) }
+        case TodoActionType.TOGGLE_TODO:
+            return { ...state, todos: state.todos.map(todo => todo.id === action.payload.id ? { ...todo, completed: action.payload.completed } : todo) };
+        default:
+            // @ts-expect-error - this is a deliberate error to show that we have handled all cases
+            throw new Error(`Unhandled action type: ${action.type}`);
+    }
+};
+
 export const TodoProvider = ({ children }: PropsWithChildren) => {
-    const [todo, setTodo] = useState<Todo[]>([...todos])
-
-    const handleSaveClick = useCallback((input: string) => {
-        if (!input) {
-            return
-        }
-        const lastTodo = todo[todo.length - 1];
-        const newId = (lastTodo ? lastTodo.id : 0) + 1
-        const newTodo = {
-            id: newId,
-            title: input,
-            completed: false
-        }
-        setTodo(prev => [...prev, newTodo])
-    }, [todo])
-
-    const handleCheckChange = useCallback((id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-        setTodo(prev => prev.map(todo => todo.id === id ? { ...todo, completed: e.target.checked } : todo));
-    }, [])
-
-    const handleDeleteClick = useCallback((id: number) => {
-        setTodo(prev =>
-            prev.filter(todo => todo.id !== id)
-        )
-    }, [])
+    const [state, dispatch] = useReducer(todoReducer, INITIAL_STATE);
 
     const value = {
-        todos: todo,
-        addTodo: handleSaveClick,
-        deleteTodo: handleDeleteClick,
-        toggleTodo: handleCheckChange
+        todos: state.todos,
+        addTodo: (newTodo: Todo) => dispatch({
+            type: TodoActionType.ADD_TODO, payload: newTodo
+        }),
+        deleteTodo: (id: number) => dispatch({ type: TodoActionType.DELETE_TODO, payload: { id } }),
+        toggleTodo: (id: number, completed: boolean) => dispatch({ type: TodoActionType.TOGGLE_TODO, payload: { id, completed } })
     }
-
-
 
     return <TodoContext.Provider value={value}>
         {children}

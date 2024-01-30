@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useTodoContext } from "../hooks/useTodoContext";
 
 export const TodoInput = () => {
-    const { addTodo } = useTodoContext();
+    const { addTodo, todos } = useTodoContext();
     const [input, setInput] = useState<string>("")
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,7 +15,15 @@ export const TodoInput = () => {
             return
         }
 
-        addTodo(input);
+        const lastTodo = todos[todos.length - 1];
+        const newId = (lastTodo ? lastTodo.id : 0) + 1
+        const newTodo = {
+            id: newId,
+            title: input,
+            completed: false
+        }
+
+        addTodo(newTodo);
         setInput("");
     }
 
