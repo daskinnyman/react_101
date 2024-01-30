@@ -5,6 +5,7 @@ import './App.css';
 import { TodoProvider } from './context/todoContext';
 
 function App() {
+  console.log("app rendered")
   return (
     <TodoProvider>
       <Container>

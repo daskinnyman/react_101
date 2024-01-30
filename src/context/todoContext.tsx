@@ -54,10 +54,10 @@ const todoReducer: Reducer<TodoState, TodoAction> = (state: TodoState, action: T
 export const TodoProvider = ({ children }: PropsWithChildren) => {
     const [state, dispatch] = useReducer(todoReducer, INITIAL_STATE);
 
-    const value = useMemo(() => {
-        return { state, dispatch }
-    }, [state, dispatch]);
+    const value = { state, dispatch }
 
+
+    console.log("provider rendered")
     return <TodoContext.Provider value={value}>
         {children}
     </TodoContext.Provider>
