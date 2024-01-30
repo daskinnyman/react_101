@@ -1,19 +1,14 @@
 import { useState } from 'react'
-import { Box, Button, Checkbox, Container, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Container, Paper } from '@mui/material';
 import { Todo, todos } from './mock/mock-todo';
-import DeleteIcon from '@mui/icons-material/Delete';
-import './App.css'
+import { TodoInput } from './components/TodoInput';
+import { TodoList } from './components/TodoList';
+import './App.css';
 
 function App() {
-  const [input, setInput] = useState<string>("")
   const [todo, setTodo] = useState<Todo[]>([...todos])
 
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
-  }
-
-  const handleSaveClick = () => {
+  const handleSaveClick = (input: string) => {
     if (!input) {
       return
     }
@@ -24,56 +19,24 @@ function App() {
       title: input,
       completed: false
     }
-    setTodo([...todo, newTodo])
-    setInput("")
+    setTodo(prev => [...prev, newTodo])
   }
 
   const handleCheckChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    setTodo(todo.map(todo => todo.id === id ? { ...todo, completed: e.target.checked } : todo));
+    setTodo(prev => prev.map(todo => todo.id === id ? { ...todo, completed: e.target.checked } : todo));
   }
 
   const handleDeleteClick = (id: number) => {
-    setTodo(
-      todo.filter(todo => todo.id !== id)
+    setTodo(prev =>
+      prev.filter(todo => todo.id !== id)
     )
-  }
-
-  function renderTodos() {
-    return todo.map(todo => <ListItem key={todo.id}
-      secondaryAction={
-        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteClick(todo.id)}>
-          <DeleteIcon />
-        </IconButton>
-      }
-    >
-      <ListItemButton dense>
-        <ListItemIcon>
-          <Checkbox
-            edge="start"
-            checked={todo.completed}
-            tabIndex={-1}
-            disableRipple
-            onChange={(e) => handleCheckChange(todo.id, e)}
-            inputProps={{ 'aria-labelledby': "labelId" }}
-          />
-        </ListItemIcon>
-        <ListItemText sx={{ fontSize: 14 }} color="text.secondary">
-          {todo.title}
-        </ListItemText>
-      </ListItemButton>
-    </ListItem>)
   }
 
   return (
     <Container>
       <Paper>
-        <Box p={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <TextField id="outlined-basic" size="small" label="To-do" variant="standard" value={input} onChange={handleInputChange} />
-          <Button variant="text" sx={{ ml: 2 }} onClick={handleSaveClick}>Save</Button>
-        </Box>
-        <List>
-          {renderTodos()}
-        </List>
+        <TodoInput onSave={handleSaveClick} />
+        <TodoList todo={todo} onDelete={handleDeleteClick} onCheckChange={handleCheckChange} />
       </Paper>
     </Container>
   )
