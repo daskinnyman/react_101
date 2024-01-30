@@ -5,25 +5,55 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import './App.css'
 
 function App() {
-  const [todo, setTodo] = useState<Todo[]>([...todos]);
+  const [input, setInput] = useState<string>("")
+  const [todo, setTodo] = useState<Todo[]>([...todos])
 
-  console.log('App re-render');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value)
+  }
+
+  const handleSaveClick = () => {
+    if (!input) {
+      return
+    }
+
+    const newId = (todo[todo.length - 1].id ?? 0) + 1
+    const newTodo = {
+      id: newId,
+      title: input,
+      completed: false
+    }
+    setTodo([...todo, newTodo])
+    setInput("")
+  }
+
+  const handleCheckChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    setTodo(todo.map(todo => todo.id === id ? { ...todo, completed: e.target.checked } : todo));
+  }
+
+  const handleDeleteClick = (id: number) => {
+    setTodo(
+      todo.filter(todo => todo.id !== id)
+    )
+  }
 
   function renderTodos() {
     return todo.map(todo => <ListItem key={todo.id}
       secondaryAction={
-        <IconButton edge="end" aria-label="delete">
+        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteClick(todo.id)}>
           <DeleteIcon />
         </IconButton>
       }
     >
-      <ListItemButton role={undefined} onClick={() => { }} dense>
+      <ListItemButton dense>
         <ListItemIcon>
           <Checkbox
             edge="start"
-            checked={true}
+            checked={todo.completed}
             tabIndex={-1}
             disableRipple
+            onChange={(e) => handleCheckChange(todo.id, e)}
             inputProps={{ 'aria-labelledby': "labelId" }}
           />
         </ListItemIcon>
@@ -38,8 +68,8 @@ function App() {
     <Container>
       <Paper>
         <Box p={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <TextField id="outlined-basic" size="small" label="To-do" variant="standard" />
-          <Button variant="text" sx={{ ml: 2 }}>Save</Button>
+          <TextField id="outlined-basic" size="small" label="To-do" variant="standard" value={input} onChange={handleInputChange} />
+          <Button variant="text" sx={{ ml: 2 }} onClick={handleSaveClick}>Save</Button>
         </Box>
         <List>
           {renderTodos()}

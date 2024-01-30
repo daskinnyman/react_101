@@ -7,17 +7,17 @@ export type Todo = {
 
 export const todos: Todo[] = [
     {
-        id: 1,
+        id: 0,
         title: 'Learn React',
         completed: false
     },
     {
-        id: 2,
+        id: 1,
         title: 'Eat Lunch',
         completed: false
     },
     {
-        id: 3,
+        id: 2,
         title: 'Take a Nap',
         completed: false
     }
