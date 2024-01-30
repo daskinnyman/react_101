@@ -1,15 +1,14 @@
 import { ListItem, IconButton, ListItemButton, ListItemIcon, Checkbox, ListItemText } from "@mui/material";
 import { Todo } from "../mock/mock-todo";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useContext } from "react";
-import { TodoContext } from "../context/todoContext";
+import { useTodoContext } from "../hooks/useTodoContext";
 
 type TodoListItemProps = {
     todo: Todo
 };
 
 export const TodoListItem = ({ todo }: TodoListItemProps) => {
-    const { deleteTodo, toggleTodo } = useContext(TodoContext);
+    const { deleteTodo, toggleTodo } = useTodoContext();
 
     const handleDeleteClick = (id: number) => {
         if (!deleteTodo) {

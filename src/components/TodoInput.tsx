@@ -1,9 +1,9 @@
 import { Box, TextField, Button } from "@mui/material"
-import { useContext, useState } from "react"
-import { TodoContext } from "../context/todoContext"
+import { useState } from "react"
+import { useTodoContext } from "../hooks/useTodoContext";
 
 export const TodoInput = () => {
-    const { addTodo } = useContext(TodoContext);
+    const { addTodo } = useTodoContext();
     const [input, setInput] = useState<string>("")
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

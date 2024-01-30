@@ -1,10 +1,9 @@
 import { List, Typography } from "@mui/material"
 import { TodoListItem } from "./TodoListItem"
-import { useContext } from "react"
-import { TodoContext } from "../context/todoContext"
+import { useTodoContext } from "../hooks/useTodoContext"
 
 export const TodoList = () => {
-    const { todos } = useContext(TodoContext)
+    const { todos } = useTodoContext();
 
     function renderTodos() {
         if (todos.length === 0) {
