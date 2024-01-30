@@ -2,28 +2,22 @@ import { ListItem, IconButton, ListItemButton, ListItemIcon, Checkbox, ListItemT
 import { Todo } from "../mock/mock-todo";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTodoContext } from "../hooks/useTodoContext";
+import { TodoActionType } from "../context/todoContext";
 
 type TodoListItemProps = {
     todo: Todo
 };
 
 export const TodoListItem = ({ todo }: TodoListItemProps) => {
-    const { deleteTodo, toggleTodo } = useTodoContext();
+    const { dispatch } = useTodoContext();
 
     const handleDeleteClick = (id: number) => {
-        if (!deleteTodo) {
-            return
-        }
-
-        deleteTodo(id);
+        dispatch({ type: TodoActionType.DELETE_TODO, payload: { id } })
     }
 
     const handleCheckChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!toggleTodo) {
-            return
-        }
         const completed = e.target.checked;
-        toggleTodo(id, completed);
+        dispatch({ type: TodoActionType.TOGGLE_TODO, payload: { id, completed } })
     }
 
     return <ListItem

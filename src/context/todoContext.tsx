@@ -1,19 +1,22 @@
-import { PropsWithChildren, Reducer, createContext, useReducer } from "react";
-import { Todo } from "../mock/mock-todo";
+import { PropsWithChildren, Reducer, createContext, useMemo, useReducer } from "react";
+import { Todo, todos } from "../mock/mock-todo";
 
 
 type TodoContextType = {
-    todos: Todo[],
-    addTodo?: (todo: Todo) => void,
-    deleteTodo?: (id: number) => void,
-    toggleTodo?: (id: number, completed: boolean) => void
+    state: TodoState,
+    dispatch: React.Dispatch<TodoAction>
 }
 
+const INITIAL_STATE: TodoState = {
+    todos: [...todos],
+};
+
 export const TodoContext = createContext<TodoContextType>({
-    todos: [],
+    state: INITIAL_STATE,
+    dispatch: () => null
 });
 
-enum TodoActionType {
+export enum TodoActionType {
     ADD_TODO = "ADD_TODO",
     DELETE_TODO = "DELETE_TODO",
     TOGGLE_TODO = "TOGGLE_TODO"
@@ -29,9 +32,7 @@ type TodoState = {
     todos: Todo[]
 }
 
-const INITIAL_STATE: TodoState = {
-    todos: [],
-};
+
 
 const todoReducer: Reducer<TodoState, TodoAction> = (state: TodoState, action: TodoAction): TodoState => {
     switch (action.type) {
@@ -53,14 +54,9 @@ const todoReducer: Reducer<TodoState, TodoAction> = (state: TodoState, action: T
 export const TodoProvider = ({ children }: PropsWithChildren) => {
     const [state, dispatch] = useReducer(todoReducer, INITIAL_STATE);
 
-    const value = {
-        todos: state.todos,
-        addTodo: (newTodo: Todo) => dispatch({
-            type: TodoActionType.ADD_TODO, payload: newTodo
-        }),
-        deleteTodo: (id: number) => dispatch({ type: TodoActionType.DELETE_TODO, payload: { id } }),
-        toggleTodo: (id: number, completed: boolean) => dispatch({ type: TodoActionType.TOGGLE_TODO, payload: { id, completed } })
-    }
+    const value = useMemo(() => {
+        return { state, dispatch }
+    }, [state, dispatch]);
 
     return <TodoContext.Provider value={value}>
         {children}

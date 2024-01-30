@@ -1,9 +1,10 @@
 import { Box, TextField, Button } from "@mui/material"
 import { useState } from "react"
 import { useTodoContext } from "../hooks/useTodoContext";
+import { TodoActionType } from "../context/todoContext";
 
 export const TodoInput = () => {
-    const { addTodo, todos } = useTodoContext();
+    const { dispatch, state } = useTodoContext();
     const [input, setInput] = useState<string>("")
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,11 +12,11 @@ export const TodoInput = () => {
     }
 
     const handleSaveClick = () => {
-        if (!input || !addTodo) {
+        if (!input) {
             return
         }
 
-        const lastTodo = todos[todos.length - 1];
+        const lastTodo = state.todos[state.todos.length - 1];
         const newId = (lastTodo ? lastTodo.id : 0) + 1
         const newTodo = {
             id: newId,
@@ -23,7 +24,8 @@ export const TodoInput = () => {
             completed: false
         }
 
-        addTodo(newTodo);
+
+        dispatch({ type: TodoActionType.ADD_TODO, payload: newTodo })
         setInput("");
     }
 
