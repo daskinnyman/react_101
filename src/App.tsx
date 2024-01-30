@@ -1,35 +1,51 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Box, Button, Checkbox, Container, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Todo, todos } from './mock/mock-todo';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './App.css'
-import { CountButton } from './components/CountButton';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [todo, setTodo] = useState<Todo[]>([...todos]);
 
   console.log('App re-render');
 
+  function renderTodos() {
+    return todo.map(todo => <ListItem key={todo.id}
+      secondaryAction={
+        <IconButton edge="end" aria-label="delete">
+          <DeleteIcon />
+        </IconButton>
+      }
+    >
+      <ListItemButton role={undefined} onClick={() => { }} dense>
+        <ListItemIcon>
+          <Checkbox
+            edge="start"
+            checked={true}
+            tabIndex={-1}
+            disableRipple
+            inputProps={{ 'aria-labelledby': "labelId" }}
+          />
+        </ListItemIcon>
+        <ListItemText sx={{ fontSize: 14 }} color="text.secondary">
+          {todo.title}
+        </ListItemText>
+      </ListItemButton>
+    </ListItem>)
+  }
+
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <CountButton count={count} onClick={() => setCount((count) => count + 1)} />
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Container>
+      <Paper>
+        <Box p={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <TextField id="outlined-basic" size="small" label="To-do" variant="standard" />
+          <Button variant="text" sx={{ ml: 2 }}>Save</Button>
+        </Box>
+        <List>
+          {renderTodos()}
+        </List>
+      </Paper>
+    </Container>
   )
 }
 
