@@ -24,17 +24,17 @@ function App() {
       title: input,
       completed: false
     }
-    setTodo([...todo, newTodo])
+    setTodo(prev => [...prev, newTodo])
     setInput("")
   }
 
   const handleCheckChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    setTodo(todo.map(todo => todo.id === id ? { ...todo, completed: e.target.checked } : todo));
+    setTodo(prev => prev.map(todo => todo.id === id ? { ...todo, completed: e.target.checked } : todo));
   }
 
   const handleDeleteClick = (id: number) => {
-    setTodo(
-      todo.filter(todo => todo.id !== id)
+    setTodo(prev =>
+      prev.filter(todo => todo.id !== id)
     )
   }
 
