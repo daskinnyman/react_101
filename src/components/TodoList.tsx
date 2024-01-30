@@ -1,33 +1,16 @@
-import { List } from "@mui/material"
+import { List, Typography } from "@mui/material"
 import { TodoListItem } from "./TodoListItem"
-import { Todo } from "../mock/mock-todo"
+import { useContext } from "react"
+import { TodoContext } from "../context/todoContext"
 
-type TodoListProps = {
-    todo: Todo[],
-    onDelete: (id: number) => void,
-    onCheckChange: (id: number, e: React.ChangeEvent<HTMLInputElement>) => void
-}
-
-export const TodoList = ({ todo, onDelete, onCheckChange }: TodoListProps) => {
-
-    const handleDeleteClick = (id: number) => {
-        if (!onDelete) {
-            return
-        }
-
-        onDelete(id);
-    }
-
-    const handleCheckChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!onCheckChange) {
-            return
-        }
-
-        onCheckChange(id, e);
-    }
+export const TodoList = () => {
+    const { todos } = useContext(TodoContext)
 
     function renderTodos() {
-        return todo.map(todo => <TodoListItem todo={todo} onDelete={handleDeleteClick} onCheckChange={handleCheckChange} />)
+        if (todos.length === 0) {
+            return <Typography fontSize={12} color={"#717171"} sx={{my:2}}>🎉 Hurray! You have no todos today!</Typography>
+        }
+        return todos.map(todo => <TodoListItem todo={todo} />)
     }
 
     return <List>
